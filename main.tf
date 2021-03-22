@@ -23,15 +23,14 @@ resource "google_compute_instance_template" "default" {
 
   region = "${var.region}"
 
-  tags = ["${concat(list("allow-ssh"), var.target_tags)}"]
+  tags = concat(list("allow-ssh"), var.target_tags)
 
   labels = "${var.instance_labels}"
 
   network_interface {
     network            = "${var.subnetwork == "" ? var.network : ""}"
     subnetwork         = "${var.subnetwork}"
-    access_config      = ["${var.access_config}"]
-    address            = "${var.network_ip}"
+    access_config {}
     subnetwork_project = "${var.subnetwork_project == "" ? var.project : var.subnetwork_project}"
   }
 
@@ -49,7 +48,7 @@ resource "google_compute_instance_template" "default" {
 
   service_account {
     email  = "${var.service_account_email}"
-    scopes = ["${var.service_account_scopes}"]
+    scopes = var.service_account_scopes
   }
 
   metadata = "${merge(
@@ -261,7 +260,7 @@ resource "google_compute_firewall" "mig-health-check" {
   }
 
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
-  target_tags   = ["${var.target_tags}"]
+  target_tags   = var.target_tags
 }
 
 data "google_compute_instance_group" "zonal" {
