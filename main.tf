@@ -75,7 +75,7 @@ resource "google_compute_instance_group_manager" "default" {
 
   base_instance_name = "${var.name}"
 
-  instance_template = "${google_compute_instance_template.default.self_link}"
+  instance_template = "${google_compute_instance_template.default.0.self_link}"
 
   zone = "${var.zone}"
 
@@ -110,7 +110,7 @@ resource "google_compute_autoscaler" "default" {
   name    = "${var.name}"
   zone    = "${var.zone}"
   project = "${var.project}"
-  target  = "${google_compute_instance_group_manager.default.self_link}"
+  target  = "${google_compute_instance_group_manager.default.0.self_link}"
 
   autoscaling_policy = {
     max_replicas               = "${var.max_replicas}"
@@ -145,7 +145,7 @@ resource "google_compute_region_instance_group_manager" "default" {
 
   base_instance_name = "${var.name}"
 
-  instance_template = "${google_compute_instance_template.default.self_link}"
+  instance_template = "${google_compute_instance_template.default.0.self_link}"
 
   region = "${var.region}"
 
@@ -187,7 +187,7 @@ resource "google_compute_region_autoscaler" "default" {
   name    = "${var.name}"
   region  = "${var.region}"
   project = "${var.project}"
-  target  = "${google_compute_region_instance_group_manager.default.self_link}"
+  target  = "${google_compute_region_instance_group_manager.default.0.self_link}"
 
   autoscaling_policy = {
     max_replicas               = "${var.max_replicas}"
@@ -228,7 +228,7 @@ resource "google_compute_firewall" "default-ssh" {
     ports    = ["22"]
   }
 
-  source_ranges = ["${var.ssh_source_ranges}"]
+  source_ranges = var.ssh_source_ranges
   target_tags   = ["allow-ssh"]
 }
 
