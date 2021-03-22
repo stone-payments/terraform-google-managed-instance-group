@@ -81,7 +81,7 @@ resource "google_compute_instance_group_manager" "default" {
 
   update_strategy = "${var.update_strategy}"
 
-  rolling_update_policy = var.rolling_update_policy
+  #rolling_update_policy = var.rolling_update_policy
 
   target_pools = var.target_pools
 
@@ -94,7 +94,7 @@ resource "google_compute_instance_group_manager" "default" {
     port = "${var.service_port}"
   }
 
-  auto_healing_policies = {
+  auto_healing_policies {
     health_check      = "${var.http_health_check ? element(concat(google_compute_health_check.mig-health-check.*.self_link, list("")), 0) : ""}"
     initial_delay_sec = "${var.hc_initial_delay}"
   }
@@ -151,9 +151,9 @@ resource "google_compute_region_instance_group_manager" "default" {
 
   update_strategy = "${var.update_strategy}"
 
-  rolling_update_policy = var.rolling_update_policy
+  #rolling_update_policy = var.rolling_update_policy
 
-  distribution_policy_zones = "default"
+  distribution_policy_zones = ["default"]
 
   target_pools = var.target_pools
 
@@ -177,7 +177,7 @@ resource "google_compute_region_instance_group_manager" "default" {
   }
 
   // Initial instance verification can take 10-15m when a health check is present.
-  timeouts = {
+  timeouts {
     create = "${var.http_health_check ? "15m" : "5m"}"
   }
 }
