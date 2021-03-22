@@ -81,9 +81,9 @@ resource "google_compute_instance_group_manager" "default" {
 
   update_strategy = "${var.update_strategy}"
 
-  rolling_update_policy = ["${var.rolling_update_policy}"]
+  rolling_update_policy = var.rolling_update_policy
 
-  target_pools = ["${var.target_pools}"]
+  target_pools = var.target_pools
 
   // There is no way to unset target_size when autoscaling is true so for now, jsut use the min_replicas value.
   // Issue: https://github.com/terraform-providers/terraform-provider-google/issues/667
@@ -116,9 +116,9 @@ resource "google_compute_autoscaler" "default" {
     max_replicas               = "${var.max_replicas}"
     min_replicas               = "${var.min_replicas}"
     cooldown_period            = "${var.cooldown_period}"
-    cpu_utilization            = ["${var.autoscaling_cpu}"]
-    metric                     = ["${var.autoscaling_metric}"]
-    load_balancing_utilization = ["${var.autoscaling_lb}"]
+    cpu_utilization            = var.autoscaling_cpu
+    metric                     = var.autoscaling_metric
+    load_balancing_utilization = var.autoscaling_lb
   }
 }
 
@@ -129,8 +129,8 @@ data "google_compute_zones" "available" {
 
 locals {
   distribution_zones = {
-    default = ["${data.google_compute_zones.available.names}"]
-    user    = ["${var.distribution_policy_zones}"]
+    default = data.google_compute_zones.available.names
+    user    = var.distribution_policy_zones
   }
 
   dependency_id = "${element(concat(null_resource.region_dummy_dependency.*.id, list("disabled")), 0)}"
@@ -151,11 +151,11 @@ resource "google_compute_region_instance_group_manager" "default" {
 
   update_strategy = "${var.update_strategy}"
 
-  rolling_update_policy = ["${var.rolling_update_policy}"]
+  rolling_update_policy = var.rolling_update_policy
 
-  distribution_policy_zones = ["${local.distribution_zones["${length(var.distribution_policy_zones) == 0 ? "default" : "user"}"]}"]
+  distribution_policy_zones = "default"
 
-  target_pools = ["${var.target_pools}"]
+  target_pools = var.target_pools
 
   // There is no way to unset target_size when autoscaling is true so for now, jsut use the min_replicas value.
   // Issue: https://github.com/terraform-providers/terraform-provider-google/issues/667
@@ -193,9 +193,9 @@ resource "google_compute_region_autoscaler" "default" {
     max_replicas               = "${var.max_replicas}"
     min_replicas               = "${var.min_replicas}"
     cooldown_period            = "${var.cooldown_period}"
-    cpu_utilization            = ["${var.autoscaling_cpu}"]
-    metric                     = ["${var.autoscaling_metric}"]
-    load_balancing_utilization = ["${var.autoscaling_lb}"]
+    cpu_utilization            = var.autoscaling_cpu
+    metric                     = var.autoscaling_metric
+    load_balancing_utilization = var.autoscaling_lb
   }
 }
 
@@ -256,7 +256,7 @@ resource "google_compute_firewall" "mig-health-check" {
 
   allow {
     protocol = "tcp"
-    ports    = ["${var.hc_port == "" ? var.service_port : var.hc_port}"]
+    ports    = [var.service_port]
   }
 
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
