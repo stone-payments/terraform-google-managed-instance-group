@@ -112,7 +112,7 @@ resource "google_compute_autoscaler" "default" {
   project = "${var.project}"
   target  = "${google_compute_instance_group_manager.default.0.self_link}"
 
-  autoscaling_policy = {
+  autoscaling_policy {
     max_replicas               = "${var.max_replicas}"
     min_replicas               = "${var.min_replicas}"
     cooldown_period            = "${var.cooldown_period}"
@@ -189,7 +189,7 @@ resource "google_compute_region_autoscaler" "default" {
   project = "${var.project}"
   target  = "${google_compute_region_instance_group_manager.default.0.self_link}"
 
-  autoscaling_policy = {
+  autoscaling_policy {
     max_replicas               = "${var.max_replicas}"
     min_replicas               = "${var.min_replicas}"
     cooldown_period            = "${var.cooldown_period}"
